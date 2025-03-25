@@ -33,4 +33,7 @@ export class CreateEsclavoDto {
 
   @IsString()
   readonly healthStatus: string;
+
+  @IsUUID()
+  dictadorId: string;
 }

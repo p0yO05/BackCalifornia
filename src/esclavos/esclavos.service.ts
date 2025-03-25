@@ -4,13 +4,13 @@ import { Repository } from 'typeorm';
 import { CreateEsclavoDto } from './dto/create-esclavo.dto';
 import { UpdateEsclavoDto } from './dto/update-esclavo.dto';
 import { Esclavo } from './entities/esclavo.entity';
-import { Estado } from './entities/estado.enum';
-
+import { DictadorsService } from 'src/dictadors/dictadors.service';
 @Injectable()
 export class EsclavosService implements OnModuleInit {
   constructor(
     @InjectRepository(Esclavo)
     private readonly esclavoRepository: Repository<Esclavo>,
+    private readonly dictadorsService: DictadorsService,
   ) {}
 
   async onModuleInit() {
@@ -109,8 +109,15 @@ export class EsclavosService implements OnModuleInit {
 
   async create(createEsclavoDto: CreateEsclavoDto): Promise<Esclavo> {
     const esclavo = this.esclavoRepository.create(createEsclavoDto);
+    const dictador = await this.dictadorsService.findOne(createEsclavoDto.dictadorId); // Use findOne method from DictadorsService
+    if (!dictador) {
+      throw new NotFoundException(`Dictador with ID ${createEsclavoDto.dictadorId} not found`);
+    }
+    dictador.esclavos.push(esclavo);
+    esclavo.dictador = dictador; 
     esclavo.rank = this.calculateRank(esclavo);
-    return this.esclavoRepository.save(esclavo);
+    
+    return await this.esclavoRepository.save(esclavo);
   }
 
   async findAll(): Promise<Esclavo[]> {
