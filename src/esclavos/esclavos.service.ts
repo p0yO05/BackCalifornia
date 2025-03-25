@@ -14,15 +14,14 @@ export class EsclavosService implements OnModuleInit {
   ) {}
 
   async onModuleInit() {
-    await this.initializeData();
+   // await this.initializeData();
   }
 
-  private async initializeData() {
+/*private async initializeData() {
     const count = await this.esclavoRepository.count();
     if (count === 0) {
       const initialEsclavos: CreateEsclavoDto[] = [
         {
-          id: '123e4567-e89b-12d3-a456-426614174000',
           name: 'Luis Miguiel',
           nickname: 'EL Muerto de Hambre',
           origin: 'Venezuela',
@@ -34,7 +33,6 @@ export class EsclavosService implements OnModuleInit {
           healthStatus: 'Healthy',
         },
         {
-          id: '987a6543-b21c-45d9-b789-426614175abc',
           name: 'Alejandro Mendoza',
           nickname: 'El T 3énis',
           origin: 'México',
@@ -46,7 +44,6 @@ export class EsclavosService implements OnModuleInit {
           healthStatus: 'Injured',
         },
         {
-          id: '543b2109-c87f-65g4-h432-427734216def',
           name: 'Valeria Torres',
           nickname: 'Llama Dorada',
           origin: 'Chile',
@@ -58,7 +55,6 @@ export class EsclavosService implements OnModuleInit {
           healthStatus: 'Healthy',
         },
         {
-          id: '321f0987-d45h-76j5-k654-438854327ghi',
           name: 'Rafael Guzmán',
           nickname: 'Espíritu de Jaguar',
           origin: 'Colombia',
@@ -70,7 +66,6 @@ export class EsclavosService implements OnModuleInit {
           healthStatus: 'Healthy',
         },
         {
-          id: '210g9876-e32i-87k6-l765-449964438jkl',
           name: 'Diego Vargas',
           nickname: 'El Relámpago',
           origin: 'Argentina',
@@ -82,7 +77,6 @@ export class EsclavosService implements OnModuleInit {
           healthStatus: 'Healthy',
         },
         {
-          id: '109h8765-f21j-98l7-m876-459974549mno',
           name: 'Lucía Díaz',
           nickname: 'Sombra Nocturna',
           origin: 'Venezuela',
@@ -101,7 +95,7 @@ export class EsclavosService implements OnModuleInit {
         await this.esclavoRepository.save(esclavo);
       }
     }
-  }
+  }*/
 
   private calculateRank(esclavo: Esclavo): string {
     if (esclavo.wins > 5 || esclavo.strength > 20) {

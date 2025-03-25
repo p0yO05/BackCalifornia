@@ -1,7 +1,7 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import { Estado } from './estado.enum';
 import { IsInt, IsString, IsEnum, Min, Max } from 'class-validator';
-
+import { Dictador } from 'src/dictadors/entities/dictador.entity';
 @Entity()
 export class Esclavo {
   @PrimaryGeneratedColumn('uuid')
@@ -10,7 +10,7 @@ export class Esclavo {
   @Column()
   @IsString()
   name: string;
-
+  
   @Column()
   @IsString()
   nickname: string;
@@ -53,4 +53,8 @@ export class Esclavo {
   @Column()
   @IsString()
   rank: string;
+
+  @ManyToOne(() => Dictador, dictador => dictador.esclavos)
+  dictador: Dictador;
+
 }

@@ -7,6 +7,7 @@ import { IsInt, IsString, IsUUID, Min, Max } from 'class-validator';
 @Entity('Dictadors')
 export class Dictador {
   @PrimaryGeneratedColumn('uuid')
+  @IsUUID()
   id: string;
 
   @Column()

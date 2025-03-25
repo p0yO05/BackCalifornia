@@ -1,9 +1,7 @@
-import { IsString, IsInt, IsEnum, Min, Max } from 'class-validator';
+import { IsString, IsInt, IsEnum, Min, Max, IsUUID } from 'class-validator';
 import { Estado } from '../entities/estado.enum';
 
 export class CreateEsclavoDto {
-  @IsString()
-  readonly id: string;
 
   @IsString()
   readonly name: string;

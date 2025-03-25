@@ -1,9 +1,6 @@
 import { IsString, IsInt, IsUUID, Min, Max } from 'class-validator';
 
 export class CreateDictadorDto {
-  @IsUUID()
-  readonly id: string;
-
   @IsString()
   readonly name: string;
 

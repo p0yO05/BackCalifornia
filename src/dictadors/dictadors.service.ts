@@ -21,7 +21,7 @@ export class DictadorsService {
     return this.dictadorRepository.find({ relations: ['esclavos', 'specialEvents', 'transactionsAsBuyer', 'transactionsAsSeller'] });
   }
 
-  findOne(id: string): Promise<Dictador> {
+  findOne(id: string): Promise<Dictador | null> {
     const dictador = this.dictadorRepository.findOne({ where: { id }, relations: ['esclavos', 'specialEvents', 'transactionsAsBuyer', 'transactionsAsSeller'] });
     if (!dictador) {
       throw new NotFoundException(`Dictador with ID ${id} not found`);
@@ -29,8 +29,8 @@ export class DictadorsService {
     return dictador;
   }
 
-  update(id: string, updateDictadorDto: UpdateDictadorDto): Promise<Dictador> {
-    const dictador = this.findOne(id);
+  async update(id: string, updateDictadorDto: UpdateDictadorDto): Promise<Dictador | null> {
+    const dictador = await this.findOne(id);
     if (!dictador) {
       throw new NotFoundException(`Dictador with ID ${id} not found`);
     }
@@ -38,11 +38,16 @@ export class DictadorsService {
     return this.dictadorRepository.save(dictador);
   }
 
-  remove(id: string): Promise<void> {
-    const dictador = this.findOne(id);
+  async remove(id: string): Promise<boolean> {
+    const dictador = await this.findOne(id);
     if (!dictador) {
       throw new NotFoundException(`Dictador with ID ${id} not found`);
     }
-    return this.dictadorRepository.remove(dictador);
+    await this.dictadorRepository.remove(dictador);
+    return true;
   }
 }
+
+
+
+
