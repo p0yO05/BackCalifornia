@@ -4,10 +4,12 @@ import { BattleController } from './battles.controller';
 import { BattleService } from './battles.service';
 import { Battle } from './entities/battle.entity';
 import { Esclavo } from 'src/esclavos/entities/esclavo.entity';
+import { Dictador } from 'src/dictators/entities/dictador.entity';
+
 @Module({
-  imports: [TypeOrmModule.forFeature([Battle, Esclavo])], // Registra la batalla
-  controllers: [BattleController], // Controlador para manejar las rutas                     // Maneja
-  providers: [BattleService], // Servicio para la lógica de negocio                           // logicstica
-  exports: [BattleService], // Exporta el servicio si otros módulos lo necesitan                // Otros
+  imports: [TypeOrmModule.forFeature([Battle, Esclavo, Dictador])], // Registra las entidades necesarias
+  controllers: [BattleController], // Controlador para manejar las rutas
+  providers: [BattleService], // Servicio para la lógica de negocio
+  exports: [BattleService], // Exporta el servicio si otros módulos lo necesitan
 })
 export class BattleModule {}

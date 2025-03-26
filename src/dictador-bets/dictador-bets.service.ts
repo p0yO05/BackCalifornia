@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateBetDto } from './dto/create-dictador-bet.dto';
 import { UpdateBetDto } from './dto/create-dictador-bet.dto';
-import { Dictador } from '../dictadors/entities/dictador.entity';
+import { Dictador } from 'src/dictators/entities/dictador.entity';
 import { Esclavo } from 'src/esclavos/entities/esclavo.entity';
 import { Battle } from '../battles/entities/battle.entity';
 import { Bet } from './entities/dictador-bet.entity';

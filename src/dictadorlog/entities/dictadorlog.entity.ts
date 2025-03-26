@@ -1,5 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
-
+import { Entity, Column, PrimaryGeneratedColumn, OneToOne, JoinColumn } from 'typeorm';
+import { Dictador } from 'src/dictators/entities/dictador.entity';
 @Entity()
 export class Dictadorlog {
     @PrimaryGeneratedColumn()
@@ -14,6 +14,10 @@ export class Dictadorlog {
     @Column()
     password: string;
 
-    @Column({ nullable: true })
+    @OneToOne(() => Dictador)
+    @JoinColumn()
+    dictador: Dictador;
+
+    @Column('text',{ default: 'Dictador' })
     rol?: string;
 }

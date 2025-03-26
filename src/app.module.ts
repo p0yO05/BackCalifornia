@@ -3,24 +3,16 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { DictadorsModule } from './dictadors/dictadors.module';
+import { DictadorsModule } from './dictators/dictadors.module';
 import { SponsorModule } from './sponsors/sponsors.module';
 import { BattleModule } from './battles/battles.module';
 import { BlackmarketModule } from './blackmarket/blackmarket.module';
 import { DictadorlogModule } from './dictadorlog/dictadorlog.module';
 import { BetModule } from './dictador-bets/dictador-bets.module';
-import { SpecialEventsModule } from './special-events/special-events.module';
 import { EsclavosModule } from './esclavos/esclavos.module';
+
 @Module({
   imports: [
-    DictadorsModule,
-    SponsorModule,
-    BattleModule,
-    BlackmarketModule,
-    DictadorlogModule,
-    BetModule,
-    SpecialEventsModule,
-    EsclavosModule, // Importamos el EsclavosModule aquí
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'postgres',
@@ -29,6 +21,13 @@ import { EsclavosModule } from './esclavos/esclavos.module';
       autoLoadEntities: true,
       synchronize: true,
     }),
+    DictadorsModule,
+    SponsorModule,
+    BattleModule,
+    BlackmarketModule,
+    DictadorlogModule,
+    BetModule,
+    EsclavosModule,
   ],
   controllers: [AppController],
   providers: [AppService],

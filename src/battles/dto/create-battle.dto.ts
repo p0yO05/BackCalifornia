@@ -1,33 +1,43 @@
-import { IsUUID, IsOptional, IsBoolean, IsInt, IsString } from 'class-validator';
+import { IsString, IsUUID, IsOptional, IsBoolean, IsInt } from 'class-validator';
 
 export class CreateBattleDto {
-  @IsUUID()
-  contestant_1: string;
-
-  @IsUUID()
-  contestant_2: string;
-
-  @IsOptional()
-  @IsUUID()
-  winner?: string;
-
-  @IsOptional()
-  @IsBoolean()
-  death_occurred?: boolean;
-
-  @IsOptional()
-  @IsInt()
-  kills?: number;
+  @IsString()
+  name: string; // Nombre del evento
 
   @IsOptional()
   @IsString()
-  injuries?: string;
+  description?: string; // Descripción opcional
+
+  @IsUUID()
+  organizerId: string; // ID del dictador organizador
+
+  @IsUUID()
+  contestant_1_id: string; // ID del primer concursante
+
+  @IsUUID()
+  contestant_2_id: string; // ID del segundo concursante
+
+  @IsOptional()
+  @IsUUID()
+  winner_id?: string; // ID del ganador (opcional)
 
   @IsOptional()
   @IsBoolean()
-  betrayal_occurred?: boolean;
+  death_occurred?: boolean; // Indica si ocurrió una muerte (opcional)
+
+  @IsOptional()
+  @IsInt()
+  kills?: number; // Número de muertes en el combate (opcional)
+
+  @IsOptional()
+  @IsString()
+  injuries?: string; // Descripción de las lesiones (opcional)
 
   @IsOptional()
   @IsBoolean()
-  miraculous_escape?: boolean;
+  betrayal_occurred?: boolean; // Indica si ocurrió una traición (opcional)
+
+  @IsOptional()
+  @IsBoolean()
+  miraculous_escape?: boolean; // Indica si ocurrió un escape milagroso (opcional)
 }

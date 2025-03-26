@@ -1,42 +1,36 @@
 import { Controller, Get, Post, Patch, Delete, Param, Body, HttpCode, HttpStatus } from '@nestjs/common';
 import { BattleService } from './battles.service';
 import { CreateBattleDto } from './dto/create-battle.dto';
-import { UpdateBattleDto } from './dto/update-battle.dto';
 
 @Controller('battles')
 export class BattleController {
-  constructor(private readonly battleService: BattleService) {}
+  constructor(private readonly battlesService: BattleService) {}
 
-  // Crear una nueva batalla
   @Post()
-  @HttpCode(HttpStatus.CREATED) //Http 201
+  @HttpCode(HttpStatus.CREATED)
   async create(@Body() createBattleDto: CreateBattleDto) {
-    return this.battleService.create(createBattleDto);
+    return this.battlesService.create(createBattleDto);
   }
 
-  // Obtener todas las batallas
   @Get()
   async findAll() {
-    return this.battleService.findAll();
+    return this.battlesService.findAll();
   }
 
-  // Obtener una batalla específica por su ID
   @Get(':id')
   async findOne(@Param('id') id: string) {
-    return this.battleService.findOne(id);
+    return this.battlesService.findOne(id);
   }
 
-  // Actualizar una batalla (estadísticas)
   @Patch(':id')
   @HttpCode(HttpStatus.OK)
-  async update(@Param('id') id: string, @Body() updateBattleDto: UpdateBattleDto) {
-    return this.battleService.update(id, updateBattleDto);
+  async update(@Param('id') id: string, @Body() updateBattleDto: CreateBattleDto) {
+    return this.battlesService.update(id, updateBattleDto);
   }
 
-  // Eliminar una batalla
   @Delete(':id')
-  @HttpCode(HttpStatus.NO_CONTENT) // http 204
+  @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id') id: string) {
-    await this.battleService.remove(id);
+    await this.battlesService.remove(id);
   }
 }

@@ -4,8 +4,8 @@ import { BlackMarketTransaction } from './entities/blackmarket.entity';
 import { BlackmarketService } from './blackmarket.service';
 import { BlackMarketController } from './blackmarket.controller';
 import { EsclavosModule } from 'src/esclavos/esclavos.module'; // Importa el módulo de Esclavos
-import { Dictador } from 'src/dictadors/entities/dictador.entity';
-import { DictadorsModule } from 'src/dictadors/dictadors.module';
+import { Dictador } from 'src/dictators/entities/dictador.entity';
+import { DictadorsModule } from 'src/dictators/dictadors.module';
 
 @Module({
   imports: [

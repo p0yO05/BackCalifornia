@@ -1,4 +1,4 @@
-import { IsEmail, IsString, MinLength } from "class-validator";
+import { IsEmail, IsString, MinLength, IsUUID } from "class-validator";
 
 export class CreateDictadorlogDto {
     @IsString()
@@ -11,4 +11,7 @@ export class CreateDictadorlogDto {
     @IsString()
     @MinLength(12)
     readonly password: string;
+
+    @IsUUID()
+    dictadorId: string;
 }

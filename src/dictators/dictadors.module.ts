@@ -4,11 +4,15 @@ import { DictadorsController } from './dictadors.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Esclavo } from 'src/esclavos/entities/esclavo.entity';
 import { Dictador } from './entities/dictador.entity';
+import { DictadorlogModule } from 'src/dictadorlog/dictadorlog.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Dictador,Esclavo])],
+  imports: [
+    TypeOrmModule.forFeature([Dictador, Esclavo]),
+    DictadorlogModule,
+  ],
   controllers: [DictadorsController],
   providers: [DictadorsService],
-  exports: [DictadorsService,TypeOrmModule],
+  exports: [DictadorsService, TypeOrmModule],
 })
 export class DictadorsModule {}

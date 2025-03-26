@@ -3,36 +3,33 @@ import { DictadorlogService } from './dictadorlog.service';
 import { DictadorlogController } from './dictadorlog.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Dictadorlog } from './entities/dictadorlog.entity';
+import { Dictador } from 'src/dictators/entities/dictador.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './JwtStrategy';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   controllers: [DictadorlogController],
   providers: [DictadorlogService, JwtStrategy],
   imports: [
-    TypeOrmModule.forFeature([Dictadorlog]), // Configuración de TypeORM 
-    PassportModule.register({ defaultStrategy: 'jwt' }), // Usamos 'jwt' 
+    TypeOrmModule.forFeature([Dictadorlog, Dictador]),
+    PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
-      useFactory: () => {
-        // Validamos que la variable de entorno esté disponible
-        if (!process.env.SECRET_KEY) {
-          throw new Error('SECRET_KEY environment variable is not set!');
-        }
-        return {
-          secret: process.env.SECRET_KEY, // Clave secreta para JWT en el env template
-          signOptions: {
-            expiresIn: '2h', // Tiempo de expiración del token al iniciar sesion
-          },
-        };
-      },
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET'),
+        signOptions: { expiresIn: '2h' },
+      }),
+      inject: [ConfigService],
     }),
   ],
   exports: [
-    TypeOrmModule, // Exportamos TypeORM para otros módulos
-    JwtStrategy, // Exportamos la estrategia JWT si otros módulos necesitan protección
-    PassportModule, // Exportamos PassportModule para autenticación
-    DictadorlogService, // Exportamos el servicio para ser usado en otros lugares si es necesario
+    TypeOrmModule,
+    JwtStrategy,
+    PassportModule,
+    DictadorlogService,
+    JwtModule,
   ],
 })
 export class DictadorlogModule {}

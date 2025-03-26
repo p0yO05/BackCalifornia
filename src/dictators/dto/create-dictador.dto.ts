@@ -8,10 +8,6 @@ export class CreateDictadorDto {
   readonly territory: string;
 
   @IsInt()
-  @Min(0)
-  readonly number_of_slaves: number;
-
-  @IsInt()
   @Min(1)
   @Max(100)
   readonly loyalty_to_Carolina: number;

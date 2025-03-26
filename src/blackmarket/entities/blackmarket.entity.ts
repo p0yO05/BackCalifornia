@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { Esclavo } from 'src/esclavos/entities/esclavo.entity';
-import { Dictador } from 'src/dictadors/entities/dictador.entity';
+import { Dictador } from 'src/dictators/entities/dictador.entity';
 
 export enum TransactionStatus {
   Completed = 'Completed',

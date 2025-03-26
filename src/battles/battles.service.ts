@@ -1,84 +1,72 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateBattleDto } from './dto/create-battle.dto';
-import { UpdateBattleDto } from './dto/update-battle.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Battle } from './entities/battle.entity';
 import { Repository } from 'typeorm';
+import { CreateBattleDto } from './dto/create-battle.dto';
+import { Battle } from './entities/battle.entity';
+import { Dictador } from 'src/dictators/entities/dictador.entity';
 import { Esclavo } from 'src/esclavos/entities/esclavo.entity';
 
 @Injectable()
 export class BattleService {
   constructor(
     @InjectRepository(Battle)
-    private readonly battleRepository: Repository<Battle>,
+    private readonly specialEventRepository: Repository<Battle>,
+
+    @InjectRepository(Dictador)
+    private readonly dictadorRepository: Repository<Dictador>,
 
     @InjectRepository(Esclavo)
-    private readonly esclavoRepository: Repository<Esclavo>, // Repositorio de Esclavos
+    private readonly esclavoRepository: Repository<Esclavo>,
   ) {}
 
-  // Crear una nueva batalla
-  async create(createBattleDto: CreateBattleDto): Promise<Battle> {
-    const { contestant_1, contestant_2, ...rest } = createBattleDto;
+  async create(createSpecialEventDto: CreateBattleDto): Promise<Battle> {
+    const { organizerId, contestant_1_id, contestant_2_id, ...rest } = createSpecialEventDto;
 
-    // Validar que los concursantes existen
-    const firstContestant = await this.esclavoRepository.findOne({ where: { id: contestant_1 } });
-    if (!firstContestant) {
-      throw new NotFoundException(`Contestant with ID ${contestant_1} does not exist`);
+    const organizer = await this.dictadorRepository.findOne({ where: { id: organizerId } });
+    if (!organizer) {
+      throw new NotFoundException(`Dictador with ID ${organizerId} not found`);
     }
 
-    const secondContestant = await this.esclavoRepository.findOne({ where: { id: contestant_2 } });
-    if (!secondContestant) {
-      throw new NotFoundException(`Contestant with ID ${contestant_2} does not exist`);
+    const contestant_1 = await this.esclavoRepository.findOne({ where: { id: contestant_1_id } });
+    if (!contestant_1) {
+      throw new NotFoundException(`Contestant with ID ${contestant_1_id} not found`);
     }
 
-    // Crear la batalla
-    const newBattle = this.battleRepository.create({
-      contestant_1: firstContestant,
-      contestant_2: secondContestant,
-      ...rest, // Estadísticas iniciales opcionales
+    const contestant_2 = await this.esclavoRepository.findOne({ where: { id: contestant_2_id } });
+    if (!contestant_2) {
+      throw new NotFoundException(`Contestant with ID ${contestant_2_id} not found`);
+    }
+
+    const specialEvent = this.specialEventRepository.create({
+      organizer,
+      contestant_1,
+      contestant_2,
+      ...rest, 
     });
 
-    return this.battleRepository.save(newBattle);
+    return this.specialEventRepository.save(specialEvent);
   }
 
-  // Obtener todas las batallas (incluyendo relaciones)
   async findAll(): Promise<Battle[]> {
-    return this.battleRepository.find({
-      relations: ['contestant_1', 'contestant_2', 'winner'], // Incluir relaciones con entidad
-    });
+    return this.specialEventRepository.find({ relations: ['organizer', 'contestant_1', 'contestant_2'] });
   }
 
-  // Obtener una batalla específica (incluyendo relaciones)
   async findOne(id: string): Promise<Battle> {
-    const battle = await this.battleRepository.findOne({
-      where: { id },
-      relations: ['contestant_1', 'contestant_2', 'winner'], // Incluir relaciones
-    });
-
-    if (!battle) {
-      throw new NotFoundException(`Oh Comrade This Battle with id ${id} was not done`);
+    const specialEvent = await this.specialEventRepository.findOne({ where: { id }, relations: ['organizer', 'contestant_1', 'contestant_2'] });
+    if (!specialEvent) {
+      throw new NotFoundException(`Special Event with ID ${id} not found`);
     }
-
-    return battle;
+    return specialEvent;
   }
 
-  // Actualizar una batalla (incluyendo estadísticas)
-  async update(id: string, updateBattleDto: UpdateBattleDto): Promise<Battle> {
-    const battle = await this.findOne(id);
-
-    if (!battle) {
-      throw new NotFoundException(`Battle with ID ${id} not found`);
-    }
-
-    // Actualizar solo los campos válidos
-    Object.assign(battle, updateBattleDto);
-
-    return this.battleRepository.save(battle);
+  async update(id: string, updateSpecialEventDto: CreateBattleDto): Promise<Battle> {
+    const specialEvent = await this.findOne(id);
+    Object.assign(specialEvent, updateSpecialEventDto);
+    return this.specialEventRepository.save(specialEvent);
   }
 
-  // Eliminar una batalla.. esta no paso Camarada
   async remove(id: string): Promise<void> {
-    const battle = await this.findOne(id);
-    await this.battleRepository.remove(battle);
+    const specialEvent = await this.findOne(id);
+    await this.specialEventRepository.remove(specialEvent);
   }
 }

@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { CreateEsclavoDto } from './dto/create-esclavo.dto';
 import { UpdateEsclavoDto } from './dto/update-esclavo.dto';
 import { Esclavo } from './entities/esclavo.entity';
-import { DictadorsService } from 'src/dictadors/dictadors.service';
+import { DictadorsService } from 'src/dictators/dictadors.service';
 @Injectable()
 export class EsclavosService implements OnModuleInit {
   constructor(

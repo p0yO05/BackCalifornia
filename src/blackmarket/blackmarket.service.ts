@@ -5,7 +5,7 @@ import { CreateBlackmarketDto } from './dto/create-blackmarket.dto';
 import { UpdateBlackmarketDto } from './dto/update-blackmarket.dto';
 import { BlackMarketTransaction, TransactionStatus, TransactionType } from './entities/blackmarket.entity';
 import { Esclavo } from 'src/esclavos/entities/esclavo.entity';
-import { Dictador } from 'src/dictadors/entities/dictador.entity';
+import { Dictador } from 'src/dictators/entities/dictador.entity';
 
 @Injectable()
 export class BlackmarketService {

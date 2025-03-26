@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { CreateDictadorDto } from './dto/create-dictador.dto';
 import { UpdateDictadorDto } from './dto/update-dictador.dto';
 import { Dictador } from './entities/dictador.entity';
+import { classToPlain } from 'class-transformer';
 
 @Injectable()
 export class DictadorsService {
@@ -12,30 +13,32 @@ export class DictadorsService {
     private readonly dictadorRepository: Repository<Dictador>,
   ) {}
 
-  create(createDictadorDto: CreateDictadorDto): Promise<Dictador> {
+  create(createDictadorDto: CreateDictadorDto): Promise<Dictador> {     
     const dictador = this.dictadorRepository.create(createDictadorDto);
     return this.dictadorRepository.save(dictador);
   }
 
-  findAll(): Promise<Dictador[]> {
-    return this.dictadorRepository.find({ relations: ['esclavos', 'specialEvents', 'transactionsAsBuyer', 'transactionsAsSeller'] });
+  async findAll(): Promise<any> {
+    const dictadors = await this.dictadorRepository.find({ relations: ['esclavos', 'specialEvents', 'transactionsAsBuyer', 'transactionsAsSeller'] });
+    return dictadors.map(dictador => classToPlain(dictador));
   }
 
-  findOne(id: string): Promise<Dictador | null> {
-    const dictador = this.dictadorRepository.findOne({ where: { id }, relations: ['esclavos', 'specialEvents', 'transactionsAsBuyer', 'transactionsAsSeller'] });
+  async findOne(id: string): Promise<any> {
+    const dictador = await this.dictadorRepository.findOne({ where: { id }, relations: ['esclavos', 'specialEvents', 'transactionsAsBuyer', 'transactionsAsSeller'] });
     if (!dictador) {
       throw new NotFoundException(`Dictador with ID ${id} not found`);
     }
-    return dictador;
+    return classToPlain(dictador);
   }
 
-  async update(id: string, updateDictadorDto: UpdateDictadorDto): Promise<Dictador | null> {
+  async update(id: string, updateDictadorDto: UpdateDictadorDto): Promise<any> {
     const dictador = await this.findOne(id);
     if (!dictador) {
       throw new NotFoundException(`Dictador with ID ${id} not found`);
     }
     Object.assign(dictador, updateDictadorDto);
-    return this.dictadorRepository.save(dictador);
+    const updatedDictador = await this.dictadorRepository.save(dictador);
+    return classToPlain(updatedDictador);
   }
 
   async remove(id: string): Promise<boolean> {
@@ -47,7 +50,3 @@ export class DictadorsService {
     return true;
   }
 }
-
-
-
-

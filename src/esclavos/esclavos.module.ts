@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { EsclavosService } from './esclavos.service';
 import { EsclavosController } from './esclavos.controller';
 import { Esclavo } from './entities/esclavo.entity';
-import { DictadorsModule } from 'src/dictadors/dictadors.module';
+import { DictadorsModule } from 'src/dictators/dictadors.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Esclavo]), DictadorsModule],
