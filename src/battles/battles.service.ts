@@ -10,7 +10,7 @@ import { Esclavo } from 'src/esclavos/entities/esclavo.entity';
 export class BattleService {
   constructor(
     @InjectRepository(Battle)
-    private readonly specialEventRepository: Repository<Battle>,
+    private readonly BattleRepository: Repository<Battle>,
 
     @InjectRepository(Dictador)
     private readonly dictadorRepository: Repository<Dictador>,
@@ -19,8 +19,8 @@ export class BattleService {
     private readonly esclavoRepository: Repository<Esclavo>,
   ) {}
 
-  async create(createSpecialEventDto: CreateBattleDto): Promise<Battle> {
-    const { organizerId, contestant_1_id, contestant_2_id, ...rest } = createSpecialEventDto;
+  async create(createBattleDto: CreateBattleDto): Promise<Battle> {
+    const { organizerId, contestant_1_id, contestant_2_id, winner_id, ...rest } = createBattleDto;
 
     const organizer = await this.dictadorRepository.findOne({ where: { id: organizerId } });
     if (!organizer) {
@@ -36,23 +36,28 @@ export class BattleService {
     if (!contestant_2) {
       throw new NotFoundException(`Contestant with ID ${contestant_2_id} not found`);
     }
+    
+   if ( contestant_1_id !== winner_id && contestant_2_id !== winner_id){ 
+      throw new Error('Invalid winner');
+   }
 
-    const specialEvent = this.specialEventRepository.create({
+    const Battle = this.BattleRepository.create({
       organizer,
       contestant_1,
       contestant_2,
+      winner_id,
       ...rest, 
     });
 
-    return this.specialEventRepository.save(specialEvent);
+    return this.BattleRepository.save(Battle);
   }
 
   async findAll(): Promise<Battle[]> {
-    return this.specialEventRepository.find({ relations: ['organizer', 'contestant_1', 'contestant_2'] });
+    return this.BattleRepository.find({ relations: ['organizer', 'contestant_1', 'contestant_2'] });
   }
 
   async findOne(id: string): Promise<Battle> {
-    const specialEvent = await this.specialEventRepository.findOne({ where: { id }, relations: ['organizer', 'contestant_1', 'contestant_2'] });
+    const specialEvent = await this.BattleRepository.findOne({ where: { id }, relations: ['organizer', 'contestant_1', 'contestant_2'] });
     if (!specialEvent) {
       throw new NotFoundException(`Special Event with ID ${id} not found`);
     }
@@ -62,11 +67,11 @@ export class BattleService {
   async update(id: string, updateSpecialEventDto: CreateBattleDto): Promise<Battle> {
     const specialEvent = await this.findOne(id);
     Object.assign(specialEvent, updateSpecialEventDto);
-    return this.specialEventRepository.save(specialEvent);
+    return this.BattleRepository.save(specialEvent);
   }
 
   async remove(id: string): Promise<void> {
     const specialEvent = await this.findOne(id);
-    await this.specialEventRepository.remove(specialEvent);
+    await this.BattleRepository.remove(specialEvent);
   }
 }

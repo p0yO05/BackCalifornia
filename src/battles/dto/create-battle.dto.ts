@@ -19,7 +19,7 @@ export class CreateBattleDto {
 
   @IsOptional()
   @IsUUID()
-  winner_id?: string; // ID del ganador (opcional)
+  winner_id: string; // ID del ganador 
 
   @IsOptional()
   @IsBoolean()

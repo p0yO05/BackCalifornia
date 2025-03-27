@@ -42,9 +42,6 @@ export class Battle {
   @Column({ type: 'boolean', default: false })
   miraculous_escape: boolean; // Indica si ocurrió un escape milagroso
 
-  @Column({ type: 'json', nullable: true })
-  results: { winner?: string; casualties?: number; notableMoments?: string[] }; // Resultados del evento
-
   @Column({ type: 'boolean', default: false })
   success: boolean; // Indicador de éxito del evento
 
