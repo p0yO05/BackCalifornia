@@ -20,26 +20,29 @@ export class BlackmarketService {
 
   // Crear una transacción en el mercado negro
   async create(createBlackmarketDto: CreateBlackmarketDto): Promise<BlackMarketTransaction> {
-    const { buyerId, sellerId, transactionType, item, amount } = createBlackmarketDto;
-  
+    const { buyerEsclavoId, buyerDictadorId, sellerId, transactionType, item, amount } = createBlackmarketDto;
+
     // Validar que el monto sea válido
     if (amount <= 0) {
       throw new BadRequestException('El monto debe ser mayor a 0.');
     }
-  
+
     // Variables para las relaciones
     let buyerEsclavo: Esclavo | null = null;
     let buyerDictador: Dictador | null = null;
     let sellerDictador: Dictador | null = null;
-  
+
     // Cargar relaciones según el tipo de transacción
     if (transactionType === TransactionType.SlaveToDictador) {
       // Buscar Esclavo como comprador
-      buyerEsclavo = await this.esclavoRepository.findOne({ where: { id: buyerId } });
-      if (!buyerEsclavo) {
-        throw new NotFoundException(`Esclavo con ID ${buyerId} no encontrado.`);
+      if (!buyerEsclavoId) {
+        throw new BadRequestException('El ID del esclavo comprador es obligatorio para este tipo de transacción.');
       }
-  
+      buyerEsclavo = await this.esclavoRepository.findOne({ where: { id: buyerEsclavoId } });
+      if (!buyerEsclavo) {
+        throw new NotFoundException(`Esclavo con ID ${buyerEsclavoId} no encontrado.`);
+      }
+
       // Buscar Dictador como vendedor
       sellerDictador = await this.dictadorRepository.findOne({ where: { id: sellerId } });
       if (!sellerDictador) {
@@ -47,11 +50,14 @@ export class BlackmarketService {
       }
     } else if (transactionType === TransactionType.DictadorToDictador) {
       // Buscar Dictador como comprador
-      buyerDictador = await this.dictadorRepository.findOne({ where: { id: buyerId } });
-      if (!buyerDictador) {
-        throw new NotFoundException(`Dictador comprador con ID ${buyerId} no encontrado.`);
+      if (!buyerDictadorId) {
+        throw new BadRequestException('El ID del dictador comprador es obligatorio para este tipo de transacción.');
       }
-  
+      buyerDictador = await this.dictadorRepository.findOne({ where: { id: buyerDictadorId } });
+      if (!buyerDictador) {
+        throw new NotFoundException(`Dictador comprador con ID ${buyerDictadorId} no encontrado.`);
+      }
+
       // Buscar Dictador como vendedor
       sellerDictador = await this.dictadorRepository.findOne({ where: { id: sellerId } });
       if (!sellerDictador) {
@@ -60,7 +66,7 @@ export class BlackmarketService {
     } else {
       throw new BadRequestException('Tipo de transacción no válido.');
     }
-  
+
     // Crear instancia de la transacción
     const newTransaction = new BlackMarketTransaction();
     newTransaction.buyerEsclavo = buyerEsclavo; // Puede ser null
@@ -70,10 +76,11 @@ export class BlackmarketService {
     newTransaction.amount = amount;
     newTransaction.transactionType = transactionType;
     newTransaction.status = TransactionStatus.Completed;
-  
+
     // Guardar la transacción
     return await this.blackMarketRepository.save(newTransaction);
   }
+
   // Obtener todas las transacciones
   async findAll(): Promise<BlackMarketTransaction[]> {
     return this.blackMarketRepository.find({

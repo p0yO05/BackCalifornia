@@ -5,7 +5,12 @@ export class CreateBlackmarketDto {
   @IsNotEmpty()
   @IsUUID()
   @ValidateIf((obj) => obj.transactionType === TransactionType.SlaveToDictador)
-  buyerId: string; // ID del comprador (esclavo o dictador)
+  buyerEsclavoId?: string; // ID del comprador esclavo (opcional)
+
+  @IsNotEmpty()
+  @IsUUID()
+  @ValidateIf((obj) => obj.transactionType === TransactionType.DictadorToDictador)
+  buyerDictadorId?: string; // ID del comprador dictador (opcional)
 
   @IsNotEmpty()
   @IsUUID()
