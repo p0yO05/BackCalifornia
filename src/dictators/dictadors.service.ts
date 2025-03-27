@@ -19,12 +19,12 @@ export class DictadorsService {
   }
 
   async findAll(): Promise<any> {
-    const dictadors = await this.dictadorRepository.find({ relations: ['esclavos', 'specialEvents', 'transactionsAsBuyer', 'transactionsAsSeller'] });
+    const dictadors = await this.dictadorRepository.find({ relations: ['esclavos', 'Battles', 'transactionsAsBuyer', 'transactionsAsSeller'] });
     return dictadors.map(dictador => classToPlain(dictador));
   }
 
   async findOne(id: string): Promise<any> {
-    const dictador = await this.dictadorRepository.findOne({ where: { id }, relations: ['esclavos', 'specialEvents', 'transactionsAsBuyer', 'transactionsAsSeller'] });
+    const dictador = await this.dictadorRepository.findOne({ where: { id }, relations: ['esclavos', 'Battles', 'transactionsAsBuyer', 'transactionsAsSeller'] });
     if (!dictador) {
       throw new NotFoundException(`Dictador with ID ${id} not found`);
     }
