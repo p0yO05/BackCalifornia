@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsUUID, IsNumber } from 'class-validator';
-import { IsOptional, IsBoolean } from 'class-validator';
+
 
 export class CreateBetDto {
   @IsNotEmpty()
@@ -19,8 +19,4 @@ export class CreateBetDto {
   amount: number; // Cantidad de la apuesta
 }
 
-export class UpdateBetDto {
-    @IsOptional()
-    @IsBoolean()
-    won?: boolean; // Resultado de la apuesta (ganó o perdió)
-  }
+
