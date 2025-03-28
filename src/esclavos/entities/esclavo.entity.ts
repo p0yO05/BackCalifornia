@@ -62,6 +62,7 @@ export class Esclavo {
 
   @OneToMany(() => Sponsor, sponsorship => sponsorship.preferred_fighter)
   sponsorships: Sponsor[];
+  
   @OneToMany(() => Battle, battle => battle.contestant_1)
   battlesAsContentant1: Battle[];
   
