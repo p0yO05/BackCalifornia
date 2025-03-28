@@ -1,4 +1,4 @@
-import { IsString, IsInt, IsUUID, Min, Max } from 'class-validator';
+import { IsString, IsInt, Min, Max } from 'class-validator';
 
 export class CreateDictadorDto {
   @IsString()

@@ -13,95 +13,15 @@ export class EsclavosService implements OnModuleInit {
     private readonly dictadorsService: DictadorsService,
   ) {}
 
-  async onModuleInit() {
-   // await this.initializeData();
-  }
-
-/*private async initializeData() {
-    const count = await this.esclavoRepository.count();
-    if (count === 0) {
-      const initialEsclavos: CreateEsclavoDto[] = [
-        {
-          name: 'Luis Miguiel',
-          nickname: 'EL Muerto de Hambre',
-          origin: 'Venezuela',
-          strength: 10,
-          agility: 10,
-          wins: 0,
-          losses: 0,
-          status: Estado.Alive,
-          healthStatus: 'Healthy',
-        },
-        {
-          name: 'Alejandro Mendoza',
-          nickname: 'El T 3énis',
-          origin: 'México',
-          strength: 12,
-          agility: 8,
-          wins: 15,
-          losses: 3,
-          status: Estado.Alive,
-          healthStatus: 'Injured',
-        },
-        {
-          name: 'Valeria Torres',
-          nickname: 'Llama Dorada',
-          origin: 'Chile',
-          strength: 11,
-          agility: 9,
-          wins: 14,
-          losses: 4,
-          status: Estado.Alive,
-          healthStatus: 'Healthy',
-        },
-        {
-          name: 'Rafael Guzmán',
-          nickname: 'Espíritu de Jaguar',
-          origin: 'Colombia',
-          strength: 10,
-          agility: 11,
-          wins: 18,
-          losses: 2,
-          status: Estado.Alive,
-          healthStatus: 'Healthy',
-        },
-        {
-          name: 'Diego Vargas',
-          nickname: 'El Relámpago',
-          origin: 'Argentina',
-          strength: 9,
-          agility: 13,
-          wins: 20,
-          losses: 1,
-          status: Estado.Alive,
-          healthStatus: 'Healthy',
-        },
-        {
-          name: 'Lucía Díaz',
-          nickname: 'Sombra Nocturna',
-          origin: 'Venezuela',
-          strength: 10,
-          agility: 12,
-          wins: 16,
-          losses: 5,
-          status: Estado.Alive,
-          healthStatus: 'Injured',
-        },
-      ];
-
-      for (const esclavoDto of initialEsclavos) {
-        const esclavo = this.esclavoRepository.create(esclavoDto);
-        esclavo.rank = this.calculateRank(esclavo);
-        await this.esclavoRepository.save(esclavo);
-      }
-    }
-  }*/
+  async onModuleInit() {}
 
   private calculateRank(esclavo: Esclavo): string {
     if (esclavo.wins > 5 || esclavo.strength > 20) {
       return 'Killing Machine';
     } else if (esclavo.wins >= 2 && esclavo.strength >= 10) {
       return 'Mediocre Fighter';
+    } else if (esclavo.wins === 0){
+      return 'Fresh Meat';
     } else {
       return 'Coward';
     }
