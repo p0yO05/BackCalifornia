@@ -49,7 +49,10 @@ export class DictadorlogService {
     }
 
     private getJwtToken(jwtPayload: JwtPayload): string {
-        return this.jwtService.sign(jwtPayload, { expiresIn: '1h' });
+        return this.jwtService.sign(jwtPayload,{ 
+            secret: process.env.JWT_SECRET || 'defaultSecretKey',
+            expiresIn: '1h',
+        });
     }
 
     async login(loginDto: LoginDTO) {
