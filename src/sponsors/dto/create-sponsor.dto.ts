@@ -6,9 +6,9 @@ export class CreateSponsorDto {
 
     @IsNotEmpty()
     @IsString()
-    donated_items: string;
+    preferred_fighter: string;
 
     @IsNotEmpty()
-    @IsDate()
-    preferred_fighter: string;
+    @IsString()
+    donated_items: string;
 }

@@ -10,6 +10,7 @@ import { BlackmarketModule } from './blackmarket/blackmarket.module';
 import { DictadorlogModule } from './dictadorlog/dictadorlog.module';
 import { BetModule } from './dictador-bets/dictador-bets.module';
 import { EsclavosModule } from './esclavos/esclavos.module';
+import { SponsorshipModule } from './sponsorship/sponsorship.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { EsclavosModule } from './esclavos/esclavos.module';
     DictadorlogModule,
     BetModule,
     EsclavosModule,
+    SponsorshipModule,
   ],
   controllers: [AppController],
   providers: [AppService],
