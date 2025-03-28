@@ -20,7 +20,7 @@ export class BattleService {
   ) {}
 
   async create(createBattleDto: CreateBattleDto): Promise<Battle> {
-    const { organizerId, contestant_1_id, contestant_2_id, winner_id, ...rest } = createBattleDto;
+    const { organizerId, contestant_1_id, contestant_2_id, ...rest } = createBattleDto;
   
     const organizer = await this.dictadorRepository.findOne({ where: { id: organizerId } });
     if (!organizer) {
@@ -42,11 +42,18 @@ export class BattleService {
       throw new Error('Dead slaves cannot participate in battles');
     }
   
-    // Validate winner
-    if (contestant_1_id !== winner_id && contestant_2_id !== winner_id) {
-      throw new Error('Nobody WI- oh wait its an error');
+    // Determine the winner based on strength and agility
+    const contestant_1_score = contestant_1.strength + contestant_1.agility;
+    const contestant_2_score = contestant_2.strength + contestant_2.agility;
+
+    let winner_id: string;
+    if (contestant_1_score > contestant_2_score) {
+      winner_id = contestant_1.id;
+    } else if (contestant_2_score > contestant_1_score) {
+      winner_id = contestant_2.id;
+    } else {
+      throw new Error('The battle is a draw, no winner can be determined');
     }
-  
     // Update stats for both contestants
     const queryRunner = this.BattleRepository.manager.connection.createQueryRunner();
     await queryRunner.connect();
@@ -56,26 +63,11 @@ export class BattleService {
       if (winner_id === contestant_1_id) {
         contestant_1.wins += 1;
         contestant_2.losses += 1;
-  
-        // Loser gets injured or dies
-        if (contestant_2.healthStatus === 'Injured') {
-          // Injured slave dies
-          contestant_2.healthStatus = 'Dead';
-
-        } else {
-          contestant_2.healthStatus = 'Injured'; // Loser gets injured
-        }
+      
       } else if (winner_id === contestant_2_id) {
         contestant_2.wins += 1;
         contestant_1.losses += 1;
-  
-        // Loser gets injured or dies
-        if (contestant_1.healthStatus === 'Injured') {
-          // Injured slave dies
-          contestant_1.healthStatus = 'Dead';
-        } else {
-          contestant_1.healthStatus = 'Injured'; // Loser gets injured
-        }
+
       }
   
 // Save updated slaves
@@ -87,7 +79,6 @@ export class BattleService {
         organizer,
         contestant_1,
         contestant_2,
-        winner_id,
         ...rest,
       });
   
