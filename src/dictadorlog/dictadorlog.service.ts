@@ -24,7 +24,7 @@ export class DictadorlogService {
     async create(createDictadorlogDto: CreateDictadorlogDto) {
         const saltRounds = 10; // Factor de costo adecuado
         const salt = await bcrypt.genSalt(saltRounds);
-        const hashedPassword = await bcrypt.hash(createDictadorlogDto.password, salt);
+        const hashedPassword = await bcrypt.hash(createDictadorlogDto.password, salt);  //Seguridad Adicional ante Ataques de fuerza bruta
 
         const dictador = await this.dictadorRepository.findOne({ where: { id: createDictadorlogDto.dictadorId } });
         if (!dictador) {
@@ -69,6 +69,10 @@ export class DictadorlogService {
         if (!dictadorlog) {
             this.failedLoginAttempts.set(email, attempts + 1);
             throw new UnauthorizedException('Invalid Dictador Credentials');
+        }
+                // Verificar que el Dictador asociado existe
+        if (!dictadorlog.dictador) {
+            throw new UnauthorizedException('No se encontró un Dictador asociado a este usuario.');
         }
 
         const valid = await bcrypt.compare(password, dictadorlog.password);
