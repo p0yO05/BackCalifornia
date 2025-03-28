@@ -15,10 +15,15 @@ import { Esclavo } from 'src/esclavos/entities/esclavo.entity';
   
     @ManyToOne(() => Esclavo, { nullable: true }) // jugador favorito, campeon corporativo
     preferred_fighter: Esclavo;
-  
+    
     @CreateDateColumn()
     createdAt: Date; // Fecha de registro del sponsor
 
+    toJSON() {
+      const { preferred_fighter, ...rest } = this;
+      return { preferred_fighter: preferred_fighter?.id, ...rest };
+    }
+  
   
   }
   

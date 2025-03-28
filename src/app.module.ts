@@ -10,7 +10,7 @@ import { BlackmarketModule } from './blackmarket/blackmarket.module';
 import { DictadorlogModule } from './dictadorlog/dictadorlog.module';
 import { BetModule } from './dictador-bets/dictador-bets.module';
 import { EsclavosModule } from './esclavos/esclavos.module';
-
+import { JwtModule } from '@nestjs/jwt';
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -20,6 +20,10 @@ import { EsclavosModule } from './esclavos/esclavos.module';
       url: process.env.DATABASE_URL,
       autoLoadEntities: true,
       synchronize: true,
+    }),
+    JwtModule.register({
+      secret: 'your-secret-key', // Replace with your own secret key
+      signOptions: { expiresIn: '1h' },
     }),
     DictadorsModule,
     SponsorModule,
@@ -31,5 +35,6 @@ import { EsclavosModule } from './esclavos/esclavos.module';
   ],
   controllers: [AppController],
   providers: [AppService],
+  exports: [JwtModule],
 })
 export class AppModule {}

@@ -24,26 +24,28 @@ export class SponsorService {
       throw new NotFoundException(`There is Not Preferred Fighter at the moment`);
     }
 
+    fighter.sponsorships = fighter.sponsorships || [];
     donated_items.split(" ").forEach((item) => {
-      const buff=Math.round(Math.random()*5);
-      fighter.agility=fighter.agility+buff > 100?100:fighter.agility+buff;
-      fighter.strength=fighter.strength+buff > 100?100:fighter.strength+buff;
-      if(item==="espinaca"){
-        fighter.agility=100;
-        fighter.strength=100;
+      const buff = Math.round(Math.random() * 5);
+      fighter.agility = fighter.agility + buff > 100 ? 100 : fighter.agility + buff;
+      fighter.strength = fighter.strength + buff > 100 ? 100 : fighter.strength + buff;
+      if (item === "espinaca") {
+        fighter.agility = 100;
+        fighter.strength = 100;
       }
-    
     });
 
     const newSponsor = this.sponsorRepository.create({
       company_name,
       donated_items,
-      preferred_fighter: fighter, // campeon corporativo aqui
+      preferred_fighter: fighter,
     });
 
     fighter.sponsorships.push(newSponsor);
     await this.esclavoRepository.save(fighter);
-    return this.sponsorRepository.save(newSponsor);
+    newSponsor.preferred_fighter=fighter;
+    
+    return await this.sponsorRepository.save(newSponsor);
   }
 
   async findAll(): Promise<Sponsor[]> {
