@@ -80,6 +80,12 @@ export class BlackmarketService {
       } else {
         throw new BadRequestException('Tipo de transacción no válido.');
       }
+      
+      const penaltyPoints = Math.floor(Math.random() * 6); // Entre 0 y 5
+      if (buyerDictador) {
+        buyerDictador.loyalty_to_Carolina = Math.max(0, buyerDictador.loyalty_to_Carolina - penaltyPoints);
+        await queryRunner.manager.save(buyerDictador);
+      }
 
       const newTransaction = new BlackMarketTransaction();
       newTransaction.buyerEsclavo = buyerEsclavo;

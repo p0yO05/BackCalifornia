@@ -5,11 +5,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Esclavo } from 'src/esclavos/entities/esclavo.entity';
 import { Dictador } from './entities/dictador.entity';
 import { DictadorlogModule } from 'src/dictadorlog/dictadorlog.module';
-
+import { PassportModule } from '@nestjs/passport';
 @Module({
   imports: [
     TypeOrmModule.forFeature([Dictador, Esclavo]),
-    DictadorlogModule,
+    DictadorlogModule, PassportModule.register({ defaultStrategy: 'jwt' })
   ],
   controllers: [DictadorsController],
   providers: [DictadorsService],

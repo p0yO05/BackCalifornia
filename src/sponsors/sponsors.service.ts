@@ -29,7 +29,31 @@ export class SponsorService {
       const buff = Math.round(Math.random() * 5);
       fighter.agility = fighter.agility + buff > 100 ? 100 : fighter.agility + buff;
       fighter.strength = fighter.strength + buff > 100 ? 100 : fighter.strength + buff;
-      if (item === "espinaca") {
+      if (item === "Una Lata de Espinaca") {
+        fighter.agility = 100;
+        fighter.strength = 100;
+      } else if ( item === "La Espada del olimpo") {
+        fighter.agility = 100;
+        fighter.strength = 100;
+      } else if (item === "una cuchara- TIENE UNA CUCHARA") {
+        fighter.agility = 65;
+        fighter.strength = 40;
+      } else if (item === "La Doom Shotgun"){
+        fighter.agility = 64;
+        fighter.strength = 64;
+      } else if (item == "Un Sandevistan Grado Militar"){
+        fighter.agility = 100;
+        fighter.strength = 30;
+      } else if (item == "El enchiridion"){
+        fighter.agility = 100;
+        fighter.strength = 100;
+      } else if (item == "Una Bandana de Municion Infinita"){
+        fighter.agility = 100;
+        fighter.strength = 40;
+      } else if (item === "Un sable de luz"){
+        fighter.agility = 100;
+        fighter.strength = 100;
+      } else if (item === "La Chancla"){
         fighter.agility = 100;
         fighter.strength = 100;
       }
