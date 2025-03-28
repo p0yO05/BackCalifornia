@@ -1,7 +1,6 @@
-import {Controller,Get,Post,Patch,Delete,Param,Body,HttpCode,HttpStatus, NotFoundException} from '@nestjs/common';
+import {Controller,Get,Post,Param,Body,HttpCode,HttpStatus, NotFoundException} from '@nestjs/common';
 import { BlackmarketService } from './blackmarket.service';
 import { CreateBlackmarketDto } from './dto/create-blackmarket.dto';
-import { UpdateBlackmarketDto } from './dto/update-blackmarket.dto';
 
 
 @Controller('blackmarket')
@@ -34,18 +33,4 @@ async findOne(@Param('id') id: string) {
 
   return transaction;
 }
-
-
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateBlackMarketTransactionDto: UpdateBlackmarketDto,
-  ) {
-    return this.blackMarketService.update(id, updateBlackMarketTransactionDto);
-  }
-  @Delete(':id')
-  @HttpCode(HttpStatus.NO_CONTENT) // Http
-  remove(@Param('id') id: string) {
-    return this.blackMarketService.remove(id);
-  }
 }
