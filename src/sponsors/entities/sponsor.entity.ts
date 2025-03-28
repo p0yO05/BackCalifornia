@@ -1,6 +1,6 @@
 import {Entity,PrimaryGeneratedColumn,Column,ManyToOne,CreateDateColumn, OneToMany} from 'typeorm';
 import { Esclavo } from 'src/esclavos/entities/esclavo.entity';
-import { Sponsorship } from 'src/sponsorship/entities/sponsorship.entity';
+
   
   @Entity('sponsors')
   export class Sponsor {
@@ -19,7 +19,6 @@ import { Sponsorship } from 'src/sponsorship/entities/sponsorship.entity';
     @CreateDateColumn()
     createdAt: Date; // Fecha de registro del sponsor
 
-    @OneToMany(() => Sponsorship, sponsorship => sponsorship.sponsor)
-    sponsorships: Sponsorship[];
+  
   }
   

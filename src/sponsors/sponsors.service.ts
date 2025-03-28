@@ -17,18 +17,32 @@ export class SponsorService {
   ) {}
 
   async create(createSponsorDto: CreateSponsorDto): Promise<Sponsor> {
-    const { preferred_fighter, ...rest } = createSponsorDto;
+    const { preferred_fighter, company_name, donated_items } = createSponsorDto;
 
     const fighter = await this.esclavoRepository.findOne({ where: { id: preferred_fighter } });
     if (!fighter) {
       throw new NotFoundException(`There is Not Preferred Fighter at the moment`);
     }
 
-    const newSponsor = this.sponsorRepository.create({
-      ...rest,
-      preferred_fighter: fighter,     // campeon corporativo aqui
+    donated_items.split(" ").forEach((item) => {
+      const buff=Math.round(Math.random()*5);
+      fighter.agility=fighter.agility+buff > 100?100:fighter.agility+buff;
+      fighter.strength=fighter.strength+buff > 100?100:fighter.strength+buff;
+      if(item==="espinaca"){
+        fighter.agility=100;
+        fighter.strength=100;
+      }
+    
     });
 
+    const newSponsor = this.sponsorRepository.create({
+      company_name,
+      donated_items,
+      preferred_fighter: fighter, // campeon corporativo aqui
+    });
+
+    fighter.sponsorships.push(newSponsor);
+    await this.esclavoRepository.save(fighter);
     return this.sponsorRepository.save(newSponsor);
   }
 
