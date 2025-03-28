@@ -5,10 +5,6 @@ export class CreateSponsorDto {
     company_name: string;
 
     @IsNotEmpty()
-    @IsString()
-    donated_items: string;
-
-    @IsNotEmpty()
     @IsDate()
     preferred_fighter: string;
 }

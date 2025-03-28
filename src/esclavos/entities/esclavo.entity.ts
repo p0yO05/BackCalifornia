@@ -1,7 +1,8 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany} from 'typeorm';
 import { Estado } from './estado.enum';
 import { IsInt, IsString, IsEnum, Min, Max } from 'class-validator';
 import { Dictador } from 'src/dictators/entities/dictador.entity';
+import { Sponsorship } from 'src/sponsorship/entities/sponsorship.entity';
 @Entity()
 export class Esclavo {
   @PrimaryGeneratedColumn('uuid')
@@ -57,6 +58,6 @@ export class Esclavo {
   @ManyToOne(() => Dictador, dictador => dictador.esclavos)
   dictador: Dictador;
 
-
-
+  @OneToMany(() => Sponsorship, sponsorship => sponsorship.esclavo)
+  sponsorships: Sponsorship[];
 }

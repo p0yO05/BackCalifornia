@@ -33,11 +33,11 @@ export class SponsorService {
   }
 
   async findAll(): Promise<Sponsor[]> {
-    return this.sponsorRepository.find({ relations: ['Companies most loyal'] });
+    return this.sponsorRepository.find();
   }
 
   async findOne(id: string): Promise<Sponsor> {
-    const sponsor = await this.sponsorRepository.findOne({ where: { id }, relations: ['Companies most loyal'] });
+    const sponsor = await this.sponsorRepository.findOne({ where: { id } });
     if (!sponsor) {
       throw new NotFoundException(`Sponsor with ID ${id} not found`);
     }

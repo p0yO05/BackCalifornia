@@ -1,10 +1,11 @@
-import {Entity,PrimaryGeneratedColumn,Column,ManyToOne,CreateDateColumn} from 'typeorm';
+import {Entity,PrimaryGeneratedColumn,Column,ManyToOne,CreateDateColumn, OneToMany} from 'typeorm';
 import { Esclavo } from 'src/esclavos/entities/esclavo.entity';
+import { Sponsorship } from 'src/sponsorship/entities/sponsorship.entity';
   
   @Entity('sponsors')
   export class Sponsor {
     @PrimaryGeneratedColumn('uuid')
-    id: string; 
+    id: string;
   
     @Column()
     company_name: string; // Nombre malevolo (doofenshmirtz malvados y asociados)
@@ -17,5 +18,8 @@ import { Esclavo } from 'src/esclavos/entities/esclavo.entity';
   
     @CreateDateColumn()
     createdAt: Date; // Fecha de registro del sponsor
+
+    @OneToMany(() => Sponsorship, sponsorship => sponsorship.sponsor)
+    sponsorships: Sponsorship[];
   }
   
