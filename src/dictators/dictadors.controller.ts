@@ -15,11 +15,13 @@ export class DictadorsController {
     return this.dictadorsService.create(createDictadorDto);
   }
   @Get()
+  @UseGuards(AuthGuard(), RoleGuardGuard)
   findAll() {
     return this.dictadorsService.findAll();
   }
-  @UseGuards(AuthGuard())
+  
   @Get(':id')
+  @UseGuards(AuthGuard(), RoleGuardGuard)
   findOne(@Param('id') id: string) {
     return this.dictadorsService.findOne(id);
   }

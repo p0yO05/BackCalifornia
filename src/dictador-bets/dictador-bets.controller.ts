@@ -15,6 +15,7 @@ export class BetController {
   }
 
   @Get()
+  @UseGuards(AuthGuard(), RoleGuardGuard)
   findAll() {
     return this.betService.findAll();
   }

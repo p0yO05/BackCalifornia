@@ -49,6 +49,10 @@ export class BlackmarketService {
           throw new NotFoundException(`Dictador con ID ${sellerId} no encontrado.`);
         }
 
+        if (sellerDictador.loyalty_to_Carolina === 0) {
+          throw new BadRequestException('El dictador vendedor no tiene suficiente lealtad para realizar transacciones.. seras descubierto pronto y carolina lo sabra muajajajajaja');
+        }
+
         // Actualizar estadísticas del esclavo
         const agilityBuff = Math.round(Math.random() * 100);
         const strengthBuff = Math.round(Math.random() * 100);

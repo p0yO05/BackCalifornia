@@ -5,6 +5,7 @@ import { Sponsor } from './entities/sponsor.entity';
 import { CreateSponsorDto } from './dto/create-sponsor.dto';
 import { UpdateSponsorDto } from './dto/update-sponsor.dto';
 import { Esclavo } from 'src/esclavos/entities/esclavo.entity';
+import { Estado } from 'src/esclavos/entities/estado.enum';
 
 @Injectable()
 export class SponsorService {
@@ -56,8 +57,52 @@ export class SponsorService {
       } else if (item === "La Chancla"){
         fighter.agility = 100;
         fighter.strength = 100;
+      } 
+      const healthProgression = {
+        Healthy: "Injured",
+        Injured: "Critical",
+        Critical: "Dead",
+        Dead: "Dead",
+      };
+  
+      if (item === "Poción Curativa Vida") {
+        // Restablece el HealthStatus a "Healthy"
+        fighter.healthStatus = "Healthy";
+      } else if (item === "Kit de primeros auxilios") {
+        // Mejora el HealthStatus un nivel hacia arriba
+        if (fighter.healthStatus === "Critical") {
+          fighter.healthStatus = "Injured";
+        } else if (fighter.healthStatus === "Injured") {
+          fighter.healthStatus = "Healthy";
+        }
+      } else if (item === "Shot de Coctel de Adrenalina") {
+        // Aumenta agilidad y mejora el HealthStatus un nivel
+        fighter.agility = fighter.agility + 20 > 100 ? 100 : fighter.agility + 20;
+        if (fighter.healthStatus === "Critical") {
+          fighter.healthStatus = "Injured";
+        } else if (fighter.healthStatus === "Injured") {
+          fighter.healthStatus = "Healthy";
+        }
+      } 
+  
+      // Ítem secreto para revivir a un esclavo "Dead"
+      if (item === "Piedra Regenerativa de Mala Calidad" && fighter.status === Estado.Dead) {
+        fighter.status = Estado.Alive;
+        fighter.healthStatus = "Critical";  // Lo revivimos en estado crítico
+      } else if (item === "Piedra Regenerativa de Media Calidad " && fighter.status === Estado.Dead) {
+        fighter.status = Estado.Alive;
+        fighter.healthStatus = "Injured";  // Lo revivimos en estado herido
       }
+      else if (item === "Piedra Regenerativa de Alta Calidad" && fighter.status === Estado.Dead) {
+        fighter.status = Estado.Alive;
+        fighter.healthStatus = "Healthy";  // Lo revivimos en estado saludable
+      }
+
     });
+  
+    
+
+    
 
     const newSponsor = this.sponsorRepository.create({
       company_name,

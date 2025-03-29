@@ -34,6 +34,10 @@ export class BetService {
     if (!dictador) {
       throw new NotFoundException(`Dictador con ID ${dictador_id} no encontrado.`);
     }
+    
+    if (dictador.loyalty_to_Carolina === 0) {
+      throw new BadRequestException('Un dictador desleal no puede realizar apuestas.');
+    }
 
     // Validar que el esclavo exista
     const contestant = await this.esclavoRepository.findOne({ where: { id: contestant_id } });

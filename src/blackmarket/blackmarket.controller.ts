@@ -1,7 +1,8 @@
-import {Controller,Get,Post,Param,Body,HttpCode,HttpStatus, NotFoundException} from '@nestjs/common';
+import {Controller,Get,Post,Param,Body,HttpCode,HttpStatus, NotFoundException, UseGuards} from '@nestjs/common';
 import { BlackmarketService } from './blackmarket.service';
 import { CreateBlackmarketDto } from './dto/create-blackmarket.dto';
-
+import { RoleGuardGuard } from 'src/role-guard/role-guard.guard';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('blackmarket')
 export class BlackMarketController {
@@ -9,6 +10,7 @@ export class BlackMarketController {
   constructor(private readonly blackMarketService: BlackmarketService) {}
 
   @Post()
+  @UseGuards(AuthGuard(), RoleGuardGuard)
   @HttpCode(HttpStatus.CREATED)
   create(
     @Body() createBlackMarketTransactionDto: CreateBlackmarketDto,
@@ -17,11 +19,13 @@ export class BlackMarketController {
   }
 
   @Get()
+  @UseGuards(AuthGuard(), RoleGuardGuard)
   findAll() {
     return this.blackMarketService.findAll();
   }
 
   @Get(':id')
+  @UseGuards(AuthGuard(), RoleGuardGuard)
 async findOne(@Param('id') id: string) {
   const transaction = await this.BlackMarketRepository.findOne({
     where: { id },
