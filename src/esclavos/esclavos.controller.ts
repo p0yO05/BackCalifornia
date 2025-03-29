@@ -4,7 +4,7 @@ import { CreateEsclavoDto } from './dto/create-esclavo.dto';
 import { UpdateEsclavoDto } from './dto/update-esclavo.dto';
 import { RoleGuardGuard } from 'src/role-guard/role-guard.guard';
 import { AuthGuard } from '@nestjs/passport';
-
+import { classToPlain } from 'class-transformer';
 @Controller('esclavos')
 export class EsclavosController {
   constructor(private readonly esclavosService: EsclavosService) {}

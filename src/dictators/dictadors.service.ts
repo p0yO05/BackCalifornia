@@ -5,6 +5,7 @@ import { CreateDictadorDto } from './dto/create-dictador.dto';
 import { UpdateDictadorDto } from './dto/update-dictador.dto';
 import { Dictador } from './entities/dictador.entity';
 import { instanceToPlain } from 'class-transformer';
+
 @Injectable()
 export class DictadorsService {
   constructor(

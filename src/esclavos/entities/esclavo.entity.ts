@@ -1,9 +1,9 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany} from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany } from 'typeorm';
 import { Estado } from './estado.enum';
 import { IsInt, IsString, IsEnum, Min, Max } from 'class-validator';
 import { Dictador } from 'src/dictators/entities/dictador.entity';
 import { Sponsor } from 'src/sponsors/entities/sponsor.entity';
-import { Battle } from 'src/battles/entities/battle.entity'; // Import Battle entity
+import { Battle } from 'src/battles/entities/battle.entity'; // Importar Battle entity
 
 @Entity()
 export class Esclavo {
@@ -62,10 +62,10 @@ export class Esclavo {
 
   @OneToMany(() => Sponsor, sponsorship => sponsorship.preferred_fighter)
   sponsorships: Sponsor[];
-  
+
   @OneToMany(() => Battle, battle => battle.contestant_1)
   battlesAsContentant1: Battle[];
-  
+
   @OneToMany(() => Battle, battle => battle.contestant_2)
   battlesAsContestants2: Battle[];
 }

@@ -80,7 +80,7 @@ export class BlackmarketService {
       } else {
         throw new BadRequestException('Tipo de transacción no válido.');
       }
-      
+
       const penaltyPoints = Math.floor(Math.random() * 6); // Entre 0 y 5
       if (buyerDictador) {
         buyerDictador.loyalty_to_Carolina = Math.max(0, buyerDictador.loyalty_to_Carolina - penaltyPoints);
@@ -96,9 +96,15 @@ export class BlackmarketService {
       newTransaction.transactionType = transactionType;
       newTransaction.status = TransactionStatus.Completed;
 
-      buyerDictador?.transactionsAsBuyer.push(newTransaction);
-      sellerDictador?.transactionsAsSeller.push(newTransaction);
+     if (buyerDictador) {
+      buyerDictador.transactionsAsBuyer = buyerDictador.transactionsAsBuyer || [];
+      buyerDictador.transactionsAsBuyer.push(newTransaction);
+    }
 
+    if (sellerDictador) {
+      sellerDictador.transactionsAsSeller = sellerDictador.transactionsAsSeller || [];
+      sellerDictador.transactionsAsSeller.push(newTransaction);
+    }
       const savedTransaction = await queryRunner.manager.save(newTransaction);
 
       await queryRunner.commitTransaction();
