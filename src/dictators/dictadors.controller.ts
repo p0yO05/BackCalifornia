@@ -10,18 +10,18 @@ export class DictadorsController {
   constructor(private readonly dictadorsService: DictadorsService) {}
 
   @Post()
-  @UseGuards(AuthGuard(),RoleGuardGuard)
+
   create(@Body() createDictadorDto: CreateDictadorDto) {
     return this.dictadorsService.create(createDictadorDto);
   }
   @Get()
-  @UseGuards(AuthGuard(), RoleGuardGuard)
+
   findAll() {
     return this.dictadorsService.findAll();
   }
   
   @Get(':id')
-  @UseGuards(AuthGuard(), RoleGuardGuard)
+
   findOne(@Param('id') id: string) {
     return this.dictadorsService.findOne(id);
   }
@@ -32,7 +32,7 @@ export class DictadorsController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard(),RoleGuardGuard)
+
   remove(@Param('id') id: string) {
     return this.dictadorsService.remove(id);
   }

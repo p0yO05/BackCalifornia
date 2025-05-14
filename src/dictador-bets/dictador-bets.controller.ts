@@ -8,26 +8,26 @@ export class BetController {
   constructor(private readonly betService: BetService) {}
 
   @Post()
-  @UseGuards(AuthGuard(), RoleGuardGuard)
+
   @HttpCode(HttpStatus.CREATED) //Http 201
   create(@Body() createBetDto: CreateBetDto) {
     return this.betService.create(createBetDto);
   }
 
   @Get()
-  @UseGuards(AuthGuard(), RoleGuardGuard)
+ 
   findAll() {
     return this.betService.findAll();
   }
 
   @Get(':id')
-  @UseGuards(AuthGuard())
+
   findOne(@Param('id') id: string) {
     return this.betService.findOne(id);
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard(), RoleGuardGuard)
+
   @HttpCode(HttpStatus.NO_CONTENT) //Http 204 siempre son asi
   remove(@Param('id') id: string) {
     return this.betService.remove(id);

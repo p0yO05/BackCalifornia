@@ -10,7 +10,7 @@ export class BlackMarketController {
   constructor(private readonly blackMarketService: BlackmarketService) {}
 
   @Post()
-  @UseGuards(AuthGuard(), RoleGuardGuard)
+
   @HttpCode(HttpStatus.CREATED)
   create(
     @Body() createBlackMarketTransactionDto: CreateBlackmarketDto,
@@ -19,13 +19,12 @@ export class BlackMarketController {
   }
 
   @Get()
-  @UseGuards(AuthGuard(), RoleGuardGuard)
+
   findAll() {
     return this.blackMarketService.findAll();
   }
 
   @Get(':id')
-  @UseGuards(AuthGuard(), RoleGuardGuard)
 async findOne(@Param('id') id: string) {
   const transaction = await this.BlackMarketRepository.findOne({
     where: { id },

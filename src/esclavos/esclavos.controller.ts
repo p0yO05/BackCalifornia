@@ -11,7 +11,7 @@ export class EsclavosController {
   constructor(private readonly esclavosService: EsclavosService) {}
 
   @Post()
-  @UseGuards(AuthGuard(),RoleGuardGuard)
+
   create(@Body() createEsclavoDto: CreateEsclavoDto) {
     return this.esclavosService.create(createEsclavoDto);
   }
@@ -20,7 +20,7 @@ export class EsclavosController {
   findAll() {
     return this.esclavosService.findAll();
   }
-  @UseGuards(AuthGuard())
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.esclavosService.findOne(id);
@@ -32,7 +32,7 @@ export class EsclavosController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard(),RoleGuardGuard)
+
   remove(@Param('id') id: string) {
     return this.esclavosService.remove(id);
   }

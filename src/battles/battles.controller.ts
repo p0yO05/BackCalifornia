@@ -20,7 +20,7 @@ export class BattleController {
   }
 
   @Get(':id')
-  @UseGuards(AuthGuard())
+
   async findOne(@Param('id') id: string) {
     return this.battlesService.findOne(id);
   }
@@ -32,7 +32,7 @@ export class BattleController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard(), RoleGuardGuard)
+
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id') id: string) {
     await this.battlesService.remove(id);
