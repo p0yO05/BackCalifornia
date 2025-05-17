@@ -12,7 +12,7 @@ export class AppController {
 
   @Get('data')
   getData(): { message: string } {
-    return { message: 'Hello from the back end!' };
+    return { message: 'Imperio Conectado: Bienvenid@' };
   }
 
   @Post('login')
