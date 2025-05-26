@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Sponsor } from './entities/sponsor.entity';
 import { CreateSponsorDto } from './dto/create-sponsor.dto';
-import { UpdateSponsorDto } from './dto/update-sponsor.dto';
 import { Esclavo } from 'src/esclavos/entities/esclavo.entity';
 import { Estado } from 'src/esclavos/entities/estado.enum';
 
@@ -22,87 +21,109 @@ export class SponsorService {
 
     const fighter = await this.esclavoRepository.findOne({ where: { id: preferred_fighter } });
     if (!fighter) {
-      throw new NotFoundException(`There is Not Preferred Fighter at the moment`);
+      throw new NotFoundException(`No hay un luchador disponible en este momento`);
     }
 
     fighter.sponsorships = fighter.sponsorships || [];
-    donated_items.split(" ").forEach((item) => {
-      const buff = Math.round(Math.random() * 5);
-      fighter.agility = fighter.agility + buff > 100 ? 100 : fighter.agility + buff;
-      fighter.strength = fighter.strength + buff > 100 ? 100 : fighter.strength + buff;
-      if (item === "Una Lata de Espinaca") {
-        fighter.agility = 100;
-        fighter.strength = 100;
-      } else if ( item === "La Espada del olimpo") {
-        fighter.agility = 100;
-        fighter.strength = 100;
-      } else if (item === "una cuchara- TIENE UNA CUCHARA") {
-        fighter.agility = 65;
-        fighter.strength = 40;
-      } else if (item === "La Doom Shotgun"){
-        fighter.agility = 64;
-        fighter.strength = 64;
-      } else if (item == "Un Sandevistan Grado Militar"){
-        fighter.agility = 100;
-        fighter.strength = 30;
-      } else if (item == "El enchiridion"){
-        fighter.agility = 100;
-        fighter.strength = 100;
-      } else if (item == "Una Bandana de Municion Infinita"){
-        fighter.agility = 100;
-        fighter.strength = 40;
-      } else if (item === "Un sable de luz"){
-        fighter.agility = 100;
-        fighter.strength = 100;
-      } else if (item === "La Chancla"){
-        fighter.agility = 100;
-        fighter.strength = 100;
-      } 
-      const healthProgression = {
-        Healthy: "Injured",
-        Injured: "Critical",
-        Critical: "Dead",
-        Dead: "Dead",
-      };
-  
-      if (item === "Poción Curativa Vida") {
-        // Restablece el HealthStatus a "Healthy"
-        fighter.healthStatus = "Healthy";
-      } else if (item === "Kit de primeros auxilios") {
-        // Mejora el HealthStatus un nivel hacia arriba
-        if (fighter.healthStatus === "Critical") {
-          fighter.healthStatus = "Injured";
-        } else if (fighter.healthStatus === "Injured") {
-          fighter.healthStatus = "Healthy";
-        }
-      } else if (item === "Shot de Coctel de Adrenalina") {
-        // Aumenta agilidad y mejora el HealthStatus un nivel
-        fighter.agility = fighter.agility + 20 > 100 ? 100 : fighter.agility + 20;
-        if (fighter.healthStatus === "Critical") {
-          fighter.healthStatus = "Injured";
-        } else if (fighter.healthStatus === "Injured") {
-          fighter.healthStatus = "Healthy";
-        }
-      } 
-  
-      // Ítem secreto para revivir a un esclavo "Dead"
-      if (item === "Piedra Regenerativa de Mala Calidad" && fighter.status === Estado.Dead) {
-        fighter.status = Estado.Alive;
-        fighter.healthStatus = "Critical";  // Lo revivimos en estado crítico
-      } else if (item === "Piedra Regenerativa de Media Calidad " && fighter.status === Estado.Dead) {
-        fighter.status = Estado.Alive;
-        fighter.healthStatus = "Injured";  // Lo revivimos en estado herido
-      }
-      else if (item === "Piedra Regenerativa de Alta Calidad" && fighter.status === Estado.Dead) {
-        fighter.status = Estado.Alive;
-        fighter.healthStatus = "Healthy";  // Lo revivimos en estado saludable
+    const items = donated_items.split(", ");
+
+    items.forEach((item) => {
+      const rareza = this.calcularRareza();
+      const efecto = this.generarEfecto(rareza);
+
+      fighter.agility = this.aplicarModificacion(fighter.agility, efecto.agilidad);
+      fighter.strength = this.aplicarModificacion(fighter.strength, efecto.fuerza);
+
+      // **Modificación del healthStatus según rareza y efecto**
+      if (efecto.salud > 0) {
+        fighter.healthStatus = this.mejorarSalud(fighter.healthStatus);
+      } else {
+        fighter.healthStatus = this.deteriorarSalud(fighter.healthStatus);
       }
 
+      // **🔥 Easter Eggs restaurados y expandidos 🔥**
+      if (item === "Una Lata de Espinaca") { 
+  fighter.agility = 100; 
+  fighter.strength = 100; 
+  fighter.healthStatus = "Healthy"; 
+} else if (item === "La Espada del Olimpo") { 
+  fighter.agility = 100; 
+  fighter.strength = 100; 
+  fighter.healthStatus = "Healthy"; 
+} else if (item === "La Doom Shotgun") { 
+  fighter.agility = 64; 
+  fighter.strength = 64; 
+} else if (item === "Un Sandevistan Grado Militar") { 
+  fighter.agility = 100; 
+  fighter.strength = 30; 
+} else if (item === "El Enchiridion") { 
+  fighter.agility = 100; 
+  fighter.strength = 100; 
+  fighter.status = Estado.Alive; 
+} else if (item === "Una Bandana de Munición Infinita") { 
+  fighter.agility = 100; 
+  fighter.strength = 40; 
+} else if (item === "Un Sable de Luz") { 
+  fighter.agility = 100; 
+  fighter.strength = 100; 
+} else if (item === "La Chancla") { 
+  fighter.agility = 100; 
+  fighter.strength = 100; 
+} else if (item === "El Anillo Único") { 
+  fighter.agility = 100; 
+  fighter.strength = 100; 
+  fighter.healthStatus = "Healthy"; 
+} else if (item === "La Piedra Filosofal") { 
+  fighter.healthStatus = "Healthy"; 
+  fighter.status = Estado.Alive; 
+} else if (item === "Las Botas de Hermes") { 
+  fighter.agility = 100; 
+} else if (item === "El Escudo de Atenea") { 
+  fighter.strength = 100; 
+} else if (item === "La BFG 9000") { 
+  fighter.agility = 50; 
+  fighter.strength = 100; 
+} else if (item === "El Ticket Dorado") { 
+  fighter.wins = (fighter.wins || 0) + 10; 
+} else if (item === "Las Semillas Zenkai") { 
+  fighter.strength = 100; 
+  fighter.healthStatus = "Healthy"; 
+} else if (item === "Semilla del Ermitaño") { 
+  const efecto = Math.random() < 0.5 ? "Buff brutal" : "Nada pasa";
+  if (efecto === "Buff brutal") {
+    fighter.healthStatus = "Healthy";
+    fighter.agility += 20;
+    fighter.strength += 20;
+  }
+} else if (item === "Arma Perdida de Elden Ring") { 
+  const efecto = Math.random();
+  if (efecto < 0.3) {
+    fighter.strength = 100;
+    fighter.agility = 100;
+  } else if (efecto < 0.7) {
+    fighter.strength -= 20;
+    fighter.agility -= 20;
+  } else {
+    fighter.healthStatus = "Dead"; 
+  }
+} else if (item === "Batarang de Batman") { 
+  const efecto = Math.random() < 0.5 ? "Precisión letal" : "Rebote aleatorio";
+  if (efecto === "Precisión letal") {
+    fighter.agility += 15;
+  } else {
+    fighter.healthStatus = "Injured"; 
+  }
+} else if (item === "Kit Médico Experimental") { 
+  const efecto = Math.random();
+  if (efecto < 0.4) {
+    fighter.healthStatus = "Healthy";
+  } else if (efecto < 0.8) {
+    fighter.healthStatus = "Critical";
+  } else {
+    fighter.healthStatus = "Dead"; 
+  }
+}
     });
-  
-    
-
-    
 
     const newSponsor = this.sponsorRepository.create({
       company_name,
@@ -112,41 +133,51 @@ export class SponsorService {
 
     fighter.sponsorships.push(newSponsor);
     await this.esclavoRepository.save(fighter);
-    newSponsor.preferred_fighter=fighter;
-    
+    newSponsor.preferred_fighter = fighter;
+
     return await this.sponsorRepository.save(newSponsor);
   }
 
-  async findAll(): Promise<Sponsor[]> {
-    return this.sponsorRepository.find();
+  private calcularRareza(): string {
+    const probabilidad = Math.random() * 100;
+    if (probabilidad < 60) return "Normal";
+    if (probabilidad < 85) return "Extraño";
+    if (probabilidad < 95) return "Raro";
+    return "Legendario";
   }
 
-  async findOne(id: string): Promise<Sponsor> {
-    const sponsor = await this.sponsorRepository.findOne({ where: { id } });
-    if (!sponsor) {
-      throw new NotFoundException(`Sponsor with ID ${id} not found`);
-    }
-    return sponsor;
+  private generarEfecto(rareza: string) {
+    const rango = rareza === "Legendario" ? [10, 20] :
+                  rareza === "Raro" ? [5, 15] :
+                  rareza === "Extraño" ? [2, 10] : [1, 5];
+
+    return {
+      agilidad: Math.floor(Math.random() * (rango[1] - rango[0] + 1)) + rango[0],
+      fuerza: Math.floor(Math.random() * (rango[1] - rango[0] + 1)) + rango[0],
+      salud: Math.random() < 0.5 ? -rango[0] : rango[0]
+    };
   }
 
-  async update(id: string, updateSponsorDto: UpdateSponsorDto): Promise<Sponsor> {
-    const sponsor = await this.findOne(id);
-    const { preferred_fighter, ...rest } = updateSponsorDto;
-
-    if (preferred_fighter) {
-      const fighter = await this.esclavoRepository.findOne({ where: { id: preferred_fighter } });
-      if (!fighter) {
-        throw new NotFoundException(`Our Company Hero Died...oh Well do you Want to be the next?`);
-      }
-      sponsor.preferred_fighter = fighter;
-    }
-
-    Object.assign(sponsor, rest);
-    return this.sponsorRepository.save(sponsor);
+  private aplicarModificacion(valor: number, modificador: number): number {
+    const nuevoValor = valor + modificador;
+    return nuevoValor > 100 ? 100 : nuevoValor < 0 ? 0 : nuevoValor;
   }
 
-  async remove(id: string): Promise<void> {
-    const sponsor = await this.findOne(id);
-    await this.sponsorRepository.remove(sponsor);
+  private mejorarSalud(status: string): string {
+    const progreso = {
+      Critical: "Injured",
+      Injured: "Healthy",
+      Healthy: "Healthy"
+    };
+    return progreso[status] || "Healthy";
+  }
+
+  private deteriorarSalud(status: string): string {
+    const progreso = {
+      Healthy: "Injured",
+      Injured: "Critical",
+      Critical: "Dead"
+    };
+    return progreso[status] || "Dead";
   }
 }
