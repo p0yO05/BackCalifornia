@@ -1,10 +1,12 @@
-import { Injectable, OnModuleInit, NotFoundException } from '@nestjs/common';
+import { Injectable, OnModuleInit, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateEsclavoDto } from './dto/create-esclavo.dto';
 import { UpdateEsclavoDto } from './dto/update-esclavo.dto';
 import { Esclavo } from './entities/esclavo.entity';
 import { DictadorsService } from 'src/dictators/dictadors.service';
+import { instanceToPlain } from 'class-transformer';
+
 @Injectable()
 export class EsclavosService implements OnModuleInit {
   constructor(
@@ -20,51 +22,84 @@ export class EsclavosService implements OnModuleInit {
       return 'Killing Machine';
     } else if (esclavo.wins >= 2 && esclavo.strength >= 10) {
       return 'Mediocre Fighter';
-    } else if (esclavo.wins === 0){
+    } else if (esclavo.wins === 0) {
       return 'Fresh Meat';
     } else {
       return 'Coward';
     }
   }
 
-  async create(createEsclavoDto: CreateEsclavoDto): Promise<Esclavo> {
-    const esclavo = this.esclavoRepository.create(createEsclavoDto);
-    const dictador = await this.dictadorsService.findOne(createEsclavoDto.dictadorId); // Use findOne method from DictadorsService
+  async create(createEsclavoDto: CreateEsclavoDto): Promise<any> {
+    const { name, nickname, origin, dictadorId, status } = createEsclavoDto;
+
+    // Verificar que el dictador existe
+    const dictador = await this.dictadorsService.findOne(dictadorId);
     if (!dictador) {
-      throw new NotFoundException(`Dictador with ID ${createEsclavoDto.dictadorId} not found`);
+      throw new NotFoundException(`Dictador con ID ${dictadorId} no encontrado.`);
     }
-    dictador.esclavos.push(esclavo);
-    esclavo.dictador = dictador; 
-    esclavo.rank = this.calculateRank(esclavo);
-    
-    return await this.esclavoRepository.save(esclavo);
+
+    // Validar que `status` sea válido
+    const STATUS_MAP = ["Alive", "Dead", "Escaped for now", "Has been set Free"];
+    if (!STATUS_MAP.includes(status)) {
+      throw new BadRequestException(`El status '${status}' no es válido. Debe ser uno de: ${STATUS_MAP.join(", ")}`);
+    }
+
+    // Crear esclavo con valores por defecto
+    const newEsclavo = this.esclavoRepository.create({
+      name,
+      nickname,
+      origin,
+      strength: createEsclavoDto.strength ?? 10,
+      agility: createEsclavoDto.agility ?? 10,
+      status,
+      wins: createEsclavoDto.wins ?? 0,
+      losses: createEsclavoDto.losses ?? 0,
+      healthStatus: createEsclavoDto.healthStatus ?? "Healthy",
+      dictador,
+    });
+
+    newEsclavo.rank = this.calculateRank(newEsclavo);
+
+    await this.esclavoRepository.save(newEsclavo);
+
+    return instanceToPlain(newEsclavo); // 🔥 Evita referencias circulares al devolver el esclavo
   }
 
-  async findAll(): Promise<Esclavo[]> {
-    return this.esclavoRepository.find();
+  async findAll(): Promise<any[]> {
+    const esclavos = await this.esclavoRepository.find({ relations: ['dictador'] });
+    return esclavos.map(esclavo => instanceToPlain(esclavo)); // 🔥 Limpia datos antes de enviarlos
   }
 
-  async findOne(id: string): Promise<Esclavo> {
-    return this.findEsclavoById(id);
-  }
-
-  private async findEsclavoById(id: string): Promise<Esclavo> {
-    const esclavo = await this.esclavoRepository.findOne({ where: { id } });
+  async findOne(id: string): Promise<any> {
+    const esclavo = await this.esclavoRepository.findOne({ where: { id }, relations: ['dictador'] });
     if (!esclavo) {
-      throw new NotFoundException(`Slave with ID ${id} not found`);
+      throw new NotFoundException(`Esclavo con ID ${id} no encontrado.`);
     }
-    return esclavo;
+
+    return instanceToPlain(esclavo);
   }
 
-  async update(id: string, updateEsclavoDto: UpdateEsclavoDto): Promise<Esclavo> {
-    const esclavo = await this.findEsclavoById(id);
-    Object.assign(esclavo, updateEsclavoDto);
+  async update(id: string, updateEsclavoDto: UpdateEsclavoDto): Promise<any> {
+    const esclavo = await this.findOne(id);
+    const { dictadorId, ...rest } = updateEsclavoDto;
+
+    if (dictadorId) {
+      const dictador = await this.dictadorsService.findOne(dictadorId);
+      if (!dictador) {
+        throw new NotFoundException(`Dictador con ID ${dictadorId} no encontrado.`);
+      }
+      esclavo.dictador = dictador;
+    }
+
+    Object.assign(esclavo, rest);
     esclavo.rank = this.calculateRank(esclavo);
-    return this.esclavoRepository.save(esclavo);
+
+    await this.esclavoRepository.save(esclavo);
+    return instanceToPlain(esclavo);
   }
 
   async remove(id: string): Promise<void> {
-    const esclavo = await this.findEsclavoById(id);
+    const esclavo = await this.findOne(id);
     await this.esclavoRepository.delete(id);
   }
 }

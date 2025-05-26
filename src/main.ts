@@ -17,7 +17,10 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   // Configuración de CORS (permite conexiones desde otros orígenes)
-  app.enableCors();
+   app.enableCors({
+    origin: 'http://localhost:5173', // URL de tu frontend
+    credentials: true,
+  });
 
   // Middleware para registrar solicitudes HTTP
   app.use(morgan('tiny'));

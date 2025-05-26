@@ -1,4 +1,4 @@
-import { IsString, IsInt, IsEnum, Min, Max, IsUUID } from 'class-validator';
+import { IsString, IsInt, IsEnum, Min, Max, IsUUID, IsOptional } from 'class-validator';
 import { Estado } from '../entities/estado.enum';
 
 export class CreateEsclavoDto {
@@ -22,17 +22,20 @@ export class CreateEsclavoDto {
   @Max(100)
   readonly agility: number;
 
+  @IsOptional()
   @IsInt()
-  readonly wins: number;
+  readonly wins?: number;
 
+  @IsOptional()
   @IsInt()
-  readonly losses: number;
+  readonly losses?: number;
 
   @IsEnum(Estado)
   readonly status: Estado;
 
+  @IsOptional()
   @IsString()
-  readonly healthStatus: string;
+  readonly healthStatus?: string;
 
   @IsUUID()
   dictadorId: string;

@@ -8,7 +8,7 @@ export class BattleController {
   constructor(private readonly battlesService: BattleService) {}
 
   @Post()
-  @UseGuards(AuthGuard(), RoleGuardGuard)
+
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() createBattleDto: CreateBattleDto) {
     return this.battlesService.create(createBattleDto);
